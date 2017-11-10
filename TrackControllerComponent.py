@@ -37,8 +37,9 @@ class TrackControllerComponent(MixerComponent):
 		self._last_undo_button_press = now
 		self._last_solo_button_press = now
 		self._last_stop_button_press = now
+		self._last_play_button_press = now
 		self._long_press = 500
-		
+
 
 	def disconnect(self):
 		self.set_prev_scene_button(None)
@@ -174,7 +175,7 @@ class TrackControllerComponent(MixerComponent):
 		if self._next_track_button != None:
 			self._next_track_button.add_value_listener(self._next_track_value, identify_sender=True)
 			self._next_track_button.turn_off()
-			
+
 	def _next_track_value(self, value, sender):
 		assert (self._next_track_button != None)
 		assert (value in range(128))
@@ -193,7 +194,7 @@ class TrackControllerComponent(MixerComponent):
 		if self._prev_track_button != None:
 			self._prev_track_button.add_value_listener(self._prev_track_value, identify_sender=True)
 			self._prev_track_button.turn_off()
-	
+
 	def _prev_track_value(self, value, sender):
 		assert (self._prev_track_button != None)
 		assert (value in range(128))
@@ -228,17 +229,17 @@ class TrackControllerComponent(MixerComponent):
 			if not sender.is_momentary() or value is not 0:
 				if self.selected_scene_idx > 0:
 					self.song().view.selected_scene = self.song().scenes[self.selected_scene_idx - 1]
-				
+
 	def _next_scene_value(self, value, sender):
 		assert (self._next_scene_button != None)
 		assert (value in range(128))
 		if self.is_enabled():
 			if not sender.is_momentary() or value is not 0:
 				if self.selected_scene_idx < len(self.song().scenes) - 1:
-					self.song().view.selected_scene = self.song().scenes[self.selected_scene_idx + 1]			
+					self.song().view.selected_scene = self.song().scenes[self.selected_scene_idx + 1]
 
 
-# PREV SCENE			
+# PREV SCENE
 	def _session_record_value(self, value):
 		assert (self._session_record_button != None)
 		assert (value in range(128))
@@ -280,14 +281,27 @@ class TrackControllerComponent(MixerComponent):
 	def _play_value(self, value):
 		assert (self._play_button != None)
 		assert (value in range(128))
+
+		now = int(round(time.time() * 1000))
 		if self.is_enabled():
-			if value != 0 or not self._play_button.is_momentary():
+			if value != 0 or not self._stop_button.is_momentary():
+				self._last_play_button_press = now
 				self._play_button.turn_on()
-				if self.selected_scene != None:
-					slot = self.selected_scene.clip_slots[self.selected_track_idx]
-					slot.fire()
-					self._control_surface.show_message("fire clip")
 			else:
+				if now - self._last_play_button_press > self._long_press:
+					self._control_surface.show_message("duplicate clip triggered")
+					slot = self.selected_scene.clip_slots[self.selected_track_idx]
+					track = slot.canonical_parent
+					newIdx = track.duplicate_clip_slot(list(track.clip_slots).index(slot))
+					self.song().view.selected_scene = self.song().scenes[newIdx]
+
+					if track.clip_slots[newIdx] != None:
+							track.clip_slots[newIdx].fire()
+				else:
+					if self.selected_scene != None:
+						slot = self.selected_scene.clip_slots[self.selected_track_idx]
+						slot.fire()
+						self._control_surface.show_message("fire clip")
 				self._play_button.turn_off()
 
 	def _stop_value(self, value):
@@ -409,10 +423,10 @@ class TrackControllerComponent(MixerComponent):
 
 			if self._play_button != None:
 				self._play_button.set_light("TrackController.Play.Off")
-				
+
 			if self._stop_button != None:
 				self._stop_button.set_light("TrackController.Stop.Off")
-		
+
 			if self._mute_button != None:
 				self._mute_button.set_on_off_values("TrackController.Mute")
 				if(self.selected_track.mute):
@@ -460,7 +474,7 @@ class TrackControllerComponent(MixerComponent):
 				if self.can_implicit_arm_track(track):
 					track.implicit_arm = self._implicit_arm and arm and self.selected_track == track
 
-		
+
 	def on_selected_track_changed(self):
 		if self.is_enabled():
 			self._do_implicit_arm()
@@ -468,19 +482,19 @@ class TrackControllerComponent(MixerComponent):
 
 	def on_selected_scene_changed(self):
 		self.update()
-	
+
 	@property
 	def selected_track(self):
 		return self.song().view.selected_track
 
 	@property
 	def selected_track_idx(self):
-		return list(self.song().tracks).index(self.song().view.selected_track) if self.song().view.selected_track in list(self.song().tracks) else None  
+		return list(self.song().tracks).index(self.song().view.selected_track) if self.song().view.selected_track in list(self.song().tracks) else None
 
 	@property
 	def selected_scene_idx(self):
 		return list(self.song().scenes).index(self.song().view.selected_scene)
-		
+
 	@property
 	def selected_scene(self):
 		return self.song().view.selected_scene
