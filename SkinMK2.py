@@ -2,7 +2,7 @@ from _Framework.Skin import Skin
 from .ColorsMK2 import Rgb
 
 class Colors:
-	
+
 	class DefaultButton:
 		On = Rgb.GREEN
 		Off = Rgb.GREEN_THIRD
@@ -36,7 +36,7 @@ class Colors:
 		class Mixer:
 			On = Rgb.MINT
 			Off = Rgb.MINT_THIRD
-	
+
 	class Session:
 		#scene
 		SceneTriggered = Rgb.GREEN_BLINK
@@ -145,7 +145,7 @@ class Colors:
 		class Toggle:
 			On = Rgb.RED
 			Off = Rgb.RED_THIRD
-	
+
 	class StepSequencer:
 		class Scale:
 			On = Rgb.RED
@@ -195,7 +195,7 @@ class Colors:
 			Metronome = Rgb.BLUE
 			NoteMarker = Rgb.AMBER
 			PageMarker = Rgb.YELLOW
-				
+
 	class StepSequencer2:
 		class Pitch:
 			On = Rgb.BLUE
@@ -221,12 +221,12 @@ class Colors:
 			MetronomeInOtherPage = Rgb.BLUE_THIRD
 			PlayInPage = Rgb.RED
 			PlayInOtherPage = Rgb.RED_THIRD
-			
+
 	class Recording:
 		On = Rgb.RED
 		Off = Rgb.RED_THIRD
 		Transition = Rgb.RED_BLINK
-		
+
 	class TrackController:
 		class Recording:
 			On = Rgb.RED
@@ -249,10 +249,10 @@ class Colors:
 		class Solo:
 			On = Rgb.AMBER
 			Off = Rgb.AMBER_THIRD
-				
+
 	class DrumGroup:
 		PadEmpty = Rgb.BLACK
-		PadFilled = Rgb.YELLOW
+		PadFilled = Rgb.YELLOW_THIRD
 		PadSelected = Rgb.LIGHT_BLUE
 		PadSelectedNotSoloed = Rgb.LIGHT_BLUE
 		PadMuted = Rgb.AMBER_THIRD
@@ -267,7 +267,7 @@ class Colors:
 		class Solo:
 			On = Rgb.BLUE
 			Off = Rgb.BLUE_THIRD
-			
+
 	class Note:
 		FeedbackRecord = Rgb.RED
 		Feedback = Rgb.GREEN
@@ -283,7 +283,7 @@ class Colors:
 			Highlight = Rgb.LIGHT_BLUE
 			OutOfScale = Rgb.DARK_GREY
 			Invalid = Rgb.BLACK
-					
+
 	class Scale:#scale edition
 		class AbsoluteRoot:
 			On = Rgb.RED
@@ -291,7 +291,7 @@ class Colors:
 		class Mode:
 			On = Rgb.RED
 			Off = Rgb.RED_THIRD
-		class Key:		
+		class Key:
 			On = Rgb.GREEN
 			Off = Rgb.GREEN_THIRD
 		CircleOfFifths = Rgb.BLUE
@@ -305,7 +305,7 @@ class Colors:
 		class QuickScale:
 			On = Rgb.AMBER
 			Off = Rgb.AMBER_THIRD
-		
+
 	class QuickScale:#quick scale on top of instrument mode
 		class Modus:
 			On = Rgb.AMBER
@@ -343,8 +343,8 @@ class Colors:
 			Dotted = Rgb.PURPLE_THIRD
 			Flam = Rgb.PURPLE
 			Selected = Rgb.RED
-			Note = Rgb.RED_HALF	
-			Tripplet = Rgb.RED_THIRD			
+			Note = Rgb.RED_HALF
+			Tripplet = Rgb.RED_THIRD
 
 def make_skin():
 	return Skin(Colors)
