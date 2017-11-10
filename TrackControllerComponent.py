@@ -14,6 +14,9 @@ class TrackControllerComponent(MixerComponent):
 	"""
 
 	def __init__(self, control_surface = None, implicit_arm = False, skin_name = "Session", enabled = False):
+		self._clip = None
+		self._clip_slot = None
+
 		self._prev_track_button = None
 		self._next_track_button = None
 		self._prev_scene_button = None
@@ -42,6 +45,8 @@ class TrackControllerComponent(MixerComponent):
 
 
 	def disconnect(self):
+		self._clip = None
+
 		self.set_prev_scene_button(None)
 		self.set_next_scene_button(None)
 		self.set_prev_track_button(None)
@@ -304,10 +309,20 @@ class TrackControllerComponent(MixerComponent):
 						self._control_surface.show_message("fire clip")
 				self._play_button.turn_off()
 
+			# if value != 0 or not self._play_button.is_momentary():
+			# 	self._play_button.turn_on()
+			# 	if self.selected_scene != None:
+			# 		slot = self.selected_scene.clip_slots[self.selected_track_idx]
+			# 		slot.fire()
+			# 		self._control_surface.show_message("fire the clip")
+			# else:
+			# 	self._play_button.turn_off()
+
 	def _stop_value(self, value):
 		assert (self._stop_button != None)
 		assert (value in range(128))
 		assert(self.selected_track != None)
+
 		now = int(round(time.time() * 1000))
 		if self.is_enabled():
 			if value != 0 or not self._stop_button.is_momentary():
@@ -406,6 +421,25 @@ class TrackControllerComponent(MixerComponent):
 							self._control_surface.show_message("track "+str(self.selected_track.name)+" unarmed")
 			self.update()
 
+	# def duplicate_clip(self):
+	# 	self._control_surface.show_message("duplicate clip!")
+	# 	if self.selected_clip:
+	# 		self._control_surface.show_message(self.selected_clip)
+			# self._control_surface.show_message(self.selected_clip)
+			# try:
+			# 	if not self._is_locked or self._lock_to_track:
+			# 		track = self._clip_slot.canonical_parent
+			# 		newIdx = track.duplicate_clip_slot(list(track.clip_slots).index(self._clip_slot))
+			# 		self.song().view.selected_scene = self.song().scenes[newIdx]
+			# 		if track.clip_slots[newIdx] != None:
+			# 			track.clip_slots[newIdx].fire()
+			# 		self.on_clip_slot_changed()
+			# 		self.update()
+			# except Live.Base.LimitationError:
+			# 	pass
+			# except RuntimeError:
+			# 	pass
+
 	def update(self):
 		if self.is_enabled():
 			self.update_track_buttons()
@@ -501,6 +535,7 @@ class TrackControllerComponent(MixerComponent):
 
 	@property
 	def selected_clip(self):
+		self._control_surface.show_message("selected clip!")
 		clip_slot = self.selected_scene.clip_slots[self.selected_track_idx]
 		if clip_slot.has_clip:
 			return clip_slot.clip
